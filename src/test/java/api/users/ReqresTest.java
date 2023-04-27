@@ -61,7 +61,19 @@ public class ReqresTest {
                 .log().all()
                 .extract().as(UnSuccessUserReg.class);
         Assertions.assertEquals("Missing password", unSuccessUserReg.getError());
+    }
 
+    @Test
+    public void sortedYearsTest(){
+        Specifications.InstallSpecification(Specifications.requestSpec(URL), Specifications.responseSpecOk200());
+        List<ColorsData> colors = given()
+                .when()
+                .get("api/unknown")
+                .then().log().all()
+                .extract().body().jsonPath().getList("data", ColorsData.class);
+        List<Integer> years = colors.stream().map(ColorsData::getYear).toList();
+        List<Integer> sortedYears = years.stream().sorted().toList();
+        Assertions.assertEquals(years, sortedYears);
     }
 
 }
