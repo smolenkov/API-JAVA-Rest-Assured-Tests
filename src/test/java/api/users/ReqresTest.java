@@ -3,6 +3,7 @@ package api.users;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
+import java.time.Clock;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -51,7 +52,7 @@ public class ReqresTest {
 
     @Test
     public void unSuccessUserRegTest() {
-        Specifications.InstallSpecification(Specifications.requestSpec(URL), Specifications.responseCpecError400());
+        Specifications.InstallSpecification(Specifications.requestSpec(URL), Specifications.responseSpecError400());
         Register user = new Register("sydney@fife", "");
         UnSuccessUserReg unSuccessUserReg = given()
                 .body(user)
@@ -74,6 +75,34 @@ public class ReqresTest {
         List<Integer> years = colors.stream().map(ColorsData::getYear).toList();
         List<Integer> sortedYears = years.stream().sorted().toList();
         Assertions.assertEquals(years, sortedYears);
+    }
+
+    @Test
+    public void deleteUserTest(){
+        Specifications.InstallSpecification(Specifications.requestSpec(URL), Specifications.responseSpecCustom(204));
+        given()
+            .when()
+            .delete("api/users?page=2")
+            .then()
+            .log().all();
+    }
+
+    @Test
+    public void checkServerAndPcDateTest(){
+        Specifications.InstallSpecification(Specifications.requestSpec(URL), Specifications.responseSpecOk200());
+        UserTime user = new UserTime("morpheus","zion resident");
+        UserTimeResponse response = given()
+                .body(user)
+                .when()
+                .put("/api/users/2")
+                .then().log().all()
+                .extract().as(UserTimeResponse.class);
+
+        String regex = ":.*$";
+        String currentTime = Clock.systemUTC().instant().toString().replaceAll(regex,"");
+        System.out.println(currentTime);
+
+        Assertions.assertEquals(response.getUpdatedAt().replaceAll(regex,""),currentTime);
     }
 
 }

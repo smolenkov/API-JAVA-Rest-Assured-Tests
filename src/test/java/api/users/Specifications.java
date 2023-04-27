@@ -2,7 +2,6 @@ package api.users;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.builder.ResponseBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
@@ -21,9 +20,15 @@ public class Specifications {
                 .build();
     }
 
-    public static ResponseSpecification responseCpecError400(){
+    public static ResponseSpecification responseSpecError400(){
         return new ResponseSpecBuilder()
                 .expectStatusCode(400)
+                .build();
+    }
+
+    public static ResponseSpecification responseSpecCustom(int status){
+        return new ResponseSpecBuilder()
+                .expectStatusCode(status)
                 .build();
     }
     public static void InstallSpecification(RequestSpecification request, ResponseSpecification response){

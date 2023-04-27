@@ -1,6 +1,5 @@
 package api.users;
 
-
 public class UserData {
     private Integer id;
     private String email;
