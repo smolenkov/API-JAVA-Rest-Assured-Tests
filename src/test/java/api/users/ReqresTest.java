@@ -1,7 +1,10 @@
 package api.users;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import static io.restassured.RestAssured.given;
 
 public class ReqresTest {
@@ -16,7 +19,14 @@ public class ReqresTest {
                 .then()
                 .log().all()
                 .extract().body().jsonPath().getList("data", UserData.class);
-        users.stream().forEach(x->Assert.assertTrue);
+        users.forEach(x-> Assertions.assertTrue(x.getAvatar().contains(x.getId().toString())));
+        Assertions.assertTrue(users.stream().allMatch(x->x.getEmail().endsWith("reqres.in")));
+
+        List<String> avatar = users.stream().map(UserData::getAvatar).toList();
+        List<String> ids = users.stream().map(x->x.getId().toString()).toList();
+        for(int i = 0; i<avatar.size(); i++){
+            Assertions.assertTrue(avatar.get(i).contains(ids.get(i)));
+        }
     }
 
 }
